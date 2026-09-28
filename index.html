@@ -1,764 +1,1285 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Свобода — мессенджер</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Свобода</title>
 
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-    }
+<style>
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+  font-family:Arial,sans-serif;
+}
 
-    body {
-      background: #101114;
-      color: white;
-      min-height: 100vh;
-    }
+body{
+  background:#111;
+  color:white;
+  height:100vh;
+  overflow:hidden;
+}
 
-    button, input {
-      font: inherit;
-    }
+button,input{
+  font:inherit;
+}
 
-    .screen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
+/* АВТОРИЗАЦИЯ */
 
-    .auth {
-      width: 100%;
-      max-width: 400px;
-      background: #1b1d22;
-      padding: 30px;
-      border-radius: 22px;
-      box-shadow: 0 10px 40px #0008;
-    }
+.auth-screen{
+  height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:20px;
+}
 
-    .logo {
-      text-align: center;
-      font-size: 36px;
-      font-weight: bold;
-      margin-bottom: 8px;
-    }
+.auth-box{
+  width:100%;
+  max-width:400px;
+  background:#1d1f23;
+  padding:30px;
+  border-radius:24px;
+}
 
-    .subtitle {
-      text-align: center;
-      color: #999;
-      margin-bottom: 25px;
-    }
+.logo{
+  text-align:center;
+  font-size:38px;
+  font-weight:bold;
+  margin-bottom:8px;
+}
 
-    input {
-      width: 100%;
-      background: #292c33;
-      color: white;
-      border: 1px solid #3b3f48;
-      border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 12px;
-      outline: none;
-    }
+.logo-text{
+  text-align:center;
+  color:#999;
+  margin-bottom:25px;
+}
 
-    input:focus {
-      border-color: #6c63ff;
-    }
+.auth-box input{
+  width:100%;
+  padding:15px;
+  margin-bottom:12px;
+  border:none;
+  outline:none;
+  border-radius:12px;
+  background:#2a2d32;
+  color:white;
+}
 
-    button {
-      border: none;
-      border-radius: 12px;
-      padding: 13px;
-      cursor: pointer;
-      color: white;
-      background: #6c63ff;
-      width: 100%;
-      font-weight: bold;
-      margin-top: 5px;
-    }
+.main-btn{
+  width:100%;
+  padding:15px;
+  border:none;
+  border-radius:12px;
+  background:#25d366;
+  color:white;
+  font-weight:bold;
+  cursor:pointer;
+}
 
-    button:hover {
-      opacity: .9;
-    }
+.switch-btn{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  background:transparent;
+  color:#aaa;
+  cursor:pointer;
+}
 
-    .switch {
-      background: transparent;
-      color: #aaa;
-      margin-top: 12px;
-    }
+.error{
+  color:#ff7777;
+  text-align:center;
+  margin-top:10px;
+}
 
-    .error {
-      color: #ff7777;
-      text-align: center;
-      margin-top: 12px;
-      min-height: 20px;
-    }
+/* МЕССЕНДЖЕР */
 
-    .messenger {
-      display: none;
-      height: 100vh;
-      width: 100%;
-    }
+.app{
+  display:none;
+  height:100vh;
+  width:100%;
+}
 
-    .sidebar {
-      width: 300px;
-      background: #181a1f;
-      border-right: 1px solid #2b2e35;
-      display: flex;
-      flex-direction: column;
-    }
+.sidebar{
+  width:350px;
+  background:#1b1d20;
+  border-right:1px solid #303236;
+  display:flex;
+  flex-direction:column;
+}
 
-    .side-top {
-      padding: 20px;
-      border-bottom: 1px solid #2b2e35;
-    }
+.sidebar-top{
+  padding:18px;
+  border-bottom:1px solid #303236;
+}
 
-    .side-title {
-      font-size: 25px;
-      font-weight: bold;
-      margin-bottom: 5px;
-    }
+.top-line{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-bottom:15px;
+}
 
-    .my-email {
-      color: #888;
-      font-size: 13px;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+.title{
+  font-size:27px;
+  font-weight:bold;
+}
 
-    .search {
-      margin-top: 15px;
-    }
+.new-chat{
+  width:42px;
+  height:42px;
+  border:none;
+  border-radius:50%;
+  background:#25d366;
+  color:white;
+  font-size:24px;
+  cursor:pointer;
+}
 
-    .users {
-      overflow-y: auto;
-      flex: 1;
-    }
+.profile{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  margin-bottom:15px;
+}
 
-    .user {
-      padding: 16px 20px;
-      border-bottom: 1px solid #24272d;
-      cursor: pointer;
-    }
+.avatar{
+  width:45px;
+  height:45px;
+  border-radius:50%;
+  background:#25d366;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:bold;
+  color:white;
+}
 
-    .user:hover,
-    .user.active {
-      background: #272a31;
-    }
+.profile-info{
+  overflow:hidden;
+}
 
-    .user-name {
-      font-weight: bold;
-    }
+.profile-email{
+  color:#999;
+  font-size:12px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
 
-    .user-email {
-      color: #888;
-      font-size: 12px;
-      margin-top: 4px;
-    }
+.search{
+  width:100%;
+  padding:12px 15px;
+  border:none;
+  outline:none;
+  border-radius:10px;
+  background:#292c31;
+  color:white;
+}
 
-    .logout {
-      background: #2a2d34;
-      margin: 15px 20px;
-      width: calc(100% - 40px);
-    }
+.users{
+  overflow-y:auto;
+  flex:1;
+}
 
-    .chat {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      background: #101114;
-    }
+.user{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px 18px;
+  cursor:pointer;
+  border-bottom:1px solid #27292d;
+}
 
-    .chat-head {
-      padding: 18px 22px;
-      border-bottom: 1px solid #2b2e35;
-      font-weight: bold;
-      min-height: 65px;
-    }
+.user:hover,
+.user.active{
+  background:#292c31;
+}
 
-    .messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
+.user-info{
+  overflow:hidden;
+}
 
-    .message {
-      max-width: 75%;
-      padding: 11px 14px;
-      border-radius: 16px;
-      line-height: 1.4;
-      word-wrap: break-word;
-    }
+.user-name{
+  font-weight:bold;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
 
-    .mine {
-      align-self: flex-end;
-      background: #6c63ff;
-      border-bottom-right-radius: 5px;
-    }
+.user-status{
+  color:#25d366;
+  font-size:12px;
+  margin-top:4px;
+}
 
-    .theirs {
-      align-self: flex-start;
-      background: #282b32;
-      border-bottom-left-radius: 5px;
-    }
+.logout{
+  margin:15px;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:#292c31;
+  color:#aaa;
+  cursor:pointer;
+}
 
-    .empty {
-      margin: auto;
-      color: #777;
-      text-align: center;
-    }
+/* ЧАТ */
 
-    .send-area {
-      display: flex;
-      gap: 10px;
-      padding: 15px;
-      border-top: 1px solid #2b2e35;
-    }
+.chat{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  background:#111315;
+}
 
-    .send-area input {
-      margin: 0;
-      flex: 1;
-    }
+.chat-header{
+  height:70px;
+  padding:12px 20px;
+  border-bottom:1px solid #303236;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
 
-    .send-area button {
-      width: 100px;
-      margin: 0;
-    }
+.chat-info{
+  flex:1;
+}
 
-    @media (max-width: 700px) {
-      .sidebar {
-        width: 110px;
-      }
+.chat-name{
+  font-weight:bold;
+}
 
-      .side-title {
-        font-size: 20px;
-      }
+.online{
+  color:#25d366;
+  font-size:12px;
+  margin-top:3px;
+}
 
-      .my-email,
-      .user-email,
-      .search {
-        display: none;
-      }
+.messages{
+  flex:1;
+  overflow-y:auto;
+  padding:20px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
 
-      .user {
-        padding: 16px 10px;
-        text-align: center;
-      }
+.welcome{
+  margin:auto;
+  text-align:center;
+  color:#777;
+}
 
-      .user-name {
-        font-size: 13px;
-      }
+.message{
+  max-width:70%;
+  padding:9px 12px;
+  border-radius:10px;
+  word-break:break-word;
+}
 
-      .message {
-        max-width: 85%;
-      }
-    }
-  </style>
+.mine{
+  align-self:flex-end;
+  background:#075e54;
+  border-bottom-right-radius:3px;
+}
+
+.theirs{
+  align-self:flex-start;
+  background:#292c31;
+  border-bottom-left-radius:3px;
+}
+
+.time{
+  color:#aaa;
+  font-size:10px;
+  text-align:right;
+  margin-top:4px;
+}
+
+.send{
+  padding:12px;
+  display:flex;
+  gap:10px;
+  border-top:1px solid #303236;
+}
+
+.send input{
+  flex:1;
+  padding:14px;
+  border:none;
+  outline:none;
+  border-radius:12px;
+  background:#292c31;
+  color:white;
+}
+
+.send button{
+  width:50px;
+  height:50px;
+  border:none;
+  border-radius:50%;
+  background:#25d366;
+  color:white;
+  font-size:20px;
+  cursor:pointer;
+}
+
+/* ТЕЛЕФОН */
+
+@media(max-width:700px){
+
+  .sidebar{
+    width:100px;
+  }
+
+  .title{
+    font-size:18px;
+  }
+
+  .profile-email,
+  .search,
+  .user-status{
+    display:none;
+  }
+
+  .sidebar-top{
+    padding:12px 8px;
+  }
+
+  .profile{
+    justify-content:center;
+  }
+
+  .top-line{
+    justify-content:center;
+  }
+
+  .new-chat{
+    width:35px;
+    height:35px;
+    font-size:18px;
+  }
+
+  .user{
+    justify-content:center;
+    padding:12px 5px;
+  }
+
+  .user-info{
+    display:none;
+  }
+
+  .avatar{
+    width:42px;
+    height:42px;
+  }
+
+  .logout{
+    margin:8px;
+    font-size:11px;
+  }
+
+  .message{
+    max-width:85%;
+  }
+}
+</style>
 </head>
 
 <body>
 
-  <!-- AUTH -->
-  <div class="screen" id="authScreen">
-    <div class="auth">
-      <div class="logo">Свобода</div>
-      <div class="subtitle">Общайся без границ</div>
+<!-- АВТОРИЗАЦИЯ -->
 
-      <input id="email" type="email" placeholder="Email">
-      <input id="password" type="password" placeholder="Пароль">
+<div class="auth-screen" id="authScreen">
 
-      <button id="mainButton">Зарегистрироваться</button>
-      <button class="switch" id="switchButton">
-        Уже есть аккаунт? Войти
-      </button>
+  <div class="auth-box">
 
-      <div class="error" id="error"></div>
+    <div class="logo">Свобода</div>
+
+    <div class="logo-text">
+      Общайся без границ
     </div>
+
+    <input
+      id="email"
+      type="email"
+      placeholder="Email"
+    >
+
+    <input
+      id="password"
+      type="password"
+      placeholder="Пароль"
+    >
+
+    <button
+      class="main-btn"
+      id="mainButton"
+    >
+      Зарегистрироваться
+    </button>
+
+    <button
+      class="switch-btn"
+      id="switchButton"
+    >
+      Уже есть аккаунт? Войти
+    </button>
+
+    <div
+      class="error"
+      id="error"
+    ></div>
+
   </div>
 
-  <!-- MESSENGER -->
-  <div class="messenger" id="messenger">
+</div>
 
-    <aside class="sidebar">
-      <div class="side-top">
-        <div class="side-title">Свобода</div>
-        <div class="my-email" id="myEmail"></div>
 
-        <input
-          class="search"
-          id="search"
-          placeholder="Поиск..."
-        >
-      </div>
+<!-- ПРИЛОЖЕНИЕ -->
 
-      <div class="users" id="users"></div>
+<div class="app" id="app">
 
-      <button class="logout" id="logoutButton">
-        Выйти
-      </button>
-    </aside>
+  <!-- СПИСОК ЧАТОВ -->
 
-    <main class="chat">
-      <div class="chat-head" id="chatHead">
-        Выберите пользователя
-      </div>
+  <aside class="sidebar">
 
-      <div class="messages" id="messages">
-        <div class="empty">
-          Выберите человека слева, чтобы начать общение.
+    <div class="sidebar-top">
+
+      <div class="top-line">
+
+        <div class="title">
+          Свобода
         </div>
-      </div>
 
-      <div class="send-area">
-        <input
-          id="messageInput"
-          placeholder="Напишите сообщение..."
-          disabled
+        <button
+          class="new-chat"
+          onclick="focusSearch()"
         >
-        <button id="sendButton" disabled>
-          Отправить
+          +
         </button>
+
       </div>
-    </main>
-
-  </div>
 
 
-  <!-- FIREBASE -->
-  <script type="module">
+      <div class="profile">
 
-    import { initializeApp }
-      from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+        <div
+          class="avatar"
+          id="myAvatar"
+        >
+          Я
+        </div>
 
-    import {
-      getAuth,
-      createUserWithEmailAndPassword,
-      signInWithEmailAndPassword,
-      onAuthStateChanged,
-      signOut
+        <div class="profile-info">
+
+          <div>
+            Вы
+          </div>
+
+          <div
+            class="profile-email"
+            id="myEmail"
+          ></div>
+
+        </div>
+
+      </div>
+
+
+      <input
+        class="search"
+        id="search"
+        placeholder="Поиск пользователей..."
+      >
+
+    </div>
+
+
+    <div
+      class="users"
+      id="users"
+    ></div>
+
+
+    <button
+      class="logout"
+      id="logoutButton"
+    >
+      Выйти
+    </button>
+
+  </aside>
+
+
+  <!-- ЧАТ -->
+
+  <main class="chat">
+
+    <div
+      class="chat-header"
+      id="chatHeader"
+    >
+
+      <div class="welcome">
+        Выберите чат
+      </div>
+
+    </div>
+
+
+    <div
+      class="messages"
+      id="messages"
+    >
+
+      <div class="welcome">
+
+        <h2>Добро пожаловать в «Свободу» 👋</h2>
+
+        <br>
+
+        Выберите пользователя слева,
+        чтобы начать общение.
+
+      </div>
+
+    </div>
+
+
+    <div class="send">
+
+      <input
+        id="messageInput"
+        placeholder="Напишите сообщение..."
+        disabled
+      >
+
+      <button
+        id="sendButton"
+        disabled
+      >
+        ➤
+      </button>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- FIREBASE -->
+
+<script type="module">
+
+import {
+  initializeApp
+}
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+
+
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+}
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  setDoc,
+  getDocs,
+  doc,
+  query,
+  orderBy,
+  onSnapshot,
+  serverTimestamp
+}
+from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+
+/* FIREBASE */
+
+const firebaseConfig = {
+
+  apiKey:
+  "AIzaSyCPih2TQxr4vAMWsuualI4O-bPF3Z0_DH8",
+
+  authDomain:
+  "svoboda-d4dca.firebaseapp.com",
+
+  projectId:
+  "svoboda-d4dca",
+
+  storageBucket:
+  "svoboda-d4dca.firebasestorage.app",
+
+  messagingSenderId:
+  "405083483306",
+
+  appId:
+  "1:405083483306:web:de39b7af3e5bd01a42b4d3",
+
+  measurementId:
+  "G-GC4TYE606V"
+};
+
+
+const app =
+  initializeApp(firebaseConfig);
+
+const auth =
+  getAuth(app);
+
+const db =
+  getFirestore(app);
+
+
+/* ЭЛЕМЕНТЫ */
+
+const authScreen =
+  document.getElementById("authScreen");
+
+const appScreen =
+  document.getElementById("app");
+
+const email =
+  document.getElementById("email");
+
+const password =
+  document.getElementById("password");
+
+const mainButton =
+  document.getElementById("mainButton");
+
+const switchButton =
+  document.getElementById("switchButton");
+
+const error =
+  document.getElementById("error");
+
+const usersBox =
+  document.getElementById("users");
+
+const myEmail =
+  document.getElementById("myEmail");
+
+const search =
+  document.getElementById("search");
+
+const chatHeader =
+  document.getElementById("chatHeader");
+
+const messages =
+  document.getElementById("messages");
+
+const messageInput =
+  document.getElementById("messageInput");
+
+const sendButton =
+  document.getElementById("sendButton");
+
+const logoutButton =
+  document.getElementById("logoutButton");
+
+
+let registerMode = true;
+
+let currentUser = null;
+
+let selectedUser = null;
+
+let unsubscribeMessages = null;
+
+let allUsers = [];
+
+
+/* РЕГИСТРАЦИЯ / ВХОД */
+
+switchButton.onclick = () => {
+
+  registerMode =
+    !registerMode;
+
+  error.textContent = "";
+
+  if(registerMode){
+
+    mainButton.textContent =
+      "Зарегистрироваться";
+
+    switchButton.textContent =
+      "Уже есть аккаунт? Войти";
+
+  }else{
+
+    mainButton.textContent =
+      "Войти";
+
+    switchButton.textContent =
+      "Нет аккаунта? Зарегистрироваться";
+
+  }
+
+};
+
+
+mainButton.onclick = async () => {
+
+  const userEmail =
+    email.value.trim();
+
+  const userPassword =
+    password.value;
+
+  error.textContent = "";
+
+
+  if(!userEmail || !userPassword){
+
+    error.textContent =
+      "Заполни email и пароль.";
+
+    return;
+  }
+
+
+  if(userPassword.length < 6){
+
+    error.textContent =
+      "Пароль минимум 6 символов.";
+
+    return;
+  }
+
+
+  try{
+
+    if(registerMode){
+
+      const result =
+        await createUserWithEmailAndPassword(
+          auth,
+          userEmail,
+          userPassword
+        );
+
+
+      await setDoc(
+        doc(
+          db,
+          "users",
+          result.user.uid
+        ),
+        {
+          email:userEmail,
+          createdAt:serverTimestamp()
+        }
+      );
+
+    }else{
+
+      await signInWithEmailAndPassword(
+        auth,
+        userEmail,
+        userPassword
+      );
+
     }
-      from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
-    import {
-      getFirestore,
-      collection,
-      addDoc,
-      setDoc,
-      getDocs,
-      doc,
-      query,
-      orderBy,
-      onSnapshot,
-      serverTimestamp
+  }catch(e){
+
+    console.log(e);
+
+    error.textContent =
+      "Ошибка: " + e.message;
+
+  }
+
+};
+
+
+/* ПРОВЕРКА ВХОДА */
+
+onAuthStateChanged(
+  auth,
+  async user => {
+
+    if(user){
+
+      currentUser =
+        user;
+
+      authScreen.style.display =
+        "none";
+
+      appScreen.style.display =
+        "flex";
+
+      myEmail.textContent =
+        user.email;
+
+      document.getElementById(
+        "myAvatar"
+      ).textContent =
+        user.email
+          .charAt(0)
+          .toUpperCase();
+
+      await loadUsers();
+
+    }else{
+
+      currentUser =
+        null;
+
+      authScreen.style.display =
+        "flex";
+
+      appScreen.style.display =
+        "none";
+
     }
-      from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+  }
+);
 
 
-    // ТВОЙ FIREBASE
-    const firebaseConfig = {
-      apiKey: "AIzaSyCPih2TQxr4vAMWsuualI4O-bPF3Z0_DH8",
-      authDomain: "svoboda-d4dca.firebaseapp.com",
-      projectId: "svoboda-d4dca",
-      storageBucket: "svoboda-d4dca.firebasestorage.app",
-      messagingSenderId: "405083483306",
-      appId: "1:405083483306:web:de39b7af3e5bd01a42b4d3",
-      measurementId: "G-GC4TYE606V"
-    };
+/* ПОЛЬЗОВАТЕЛИ */
+
+async function loadUsers(){
+
+  const snapshot =
+    await getDocs(
+      collection(db,"users")
+    );
+
+  allUsers = [];
+
+  snapshot.forEach(item => {
+
+    if(item.id !== currentUser.uid){
+
+      allUsers.push({
+
+        id:item.id,
+
+        ...item.data()
+
+      });
+
+    }
+
+  });
+
+  renderUsers(allUsers);
+
+}
 
 
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+/* ПОКАЗ ПОЛЬЗОВАТЕЛЕЙ */
+
+function renderUsers(users){
+
+  usersBox.innerHTML = "";
 
 
-    // ЭЛЕМЕНТЫ
-    const authScreen = document.getElementById("authScreen");
-    const messenger = document.getElementById("messenger");
+  if(users.length === 0){
 
-    const emailInput = document.getElementById("email");
-    const passwordInput = document.getElementById("password");
+    usersBox.innerHTML = `
+      <div style="
+        padding:25px;
+        text-align:center;
+        color:#777;
+      ">
+        Пока нет других пользователей
+      </div>
+    `;
 
-    const mainButton = document.getElementById("mainButton");
-    const switchButton = document.getElementById("switchButton");
-
-    const errorBox = document.getElementById("error");
-
-    const usersBox = document.getElementById("users");
-    const myEmail = document.getElementById("myEmail");
-
-    const searchInput = document.getElementById("search");
-
-    const chatHead = document.getElementById("chatHead");
-    const messagesBox = document.getElementById("messages");
-
-    const messageInput = document.getElementById("messageInput");
-    const sendButton = document.getElementById("sendButton");
-
-    const logoutButton = document.getElementById("logoutButton");
+    return;
+  }
 
 
-    let registerMode = true;
-    let currentUser = null;
-    let selectedUser = null;
-    let unsubscribeMessages = null;
-    let allUsers = [];
+  users.forEach(user => {
+
+    const element =
+      document.createElement("div");
+
+    element.className =
+      "user";
 
 
-    // РЕГИСТРАЦИЯ / ВХОД
-    switchButton.onclick = () => {
-
-      registerMode = !registerMode;
-
-      errorBox.textContent = "";
-
-      if (registerMode) {
-        mainButton.textContent = "Зарегистрироваться";
-        switchButton.textContent = "Уже есть аккаунт? Войти";
-      } else {
-        mainButton.textContent = "Войти";
-        switchButton.textContent = "Нет аккаунта? Зарегистрироваться";
-      }
-    };
+    const firstLetter =
+      user.email
+        .charAt(0)
+        .toUpperCase();
 
 
-    mainButton.onclick = async () => {
+    element.innerHTML = `
 
-      const email = emailInput.value.trim();
-      const password = passwordInput.value;
+      <div class="avatar">
+        ${firstLetter}
+      </div>
 
-      errorBox.textContent = "";
+      <div class="user-info">
 
-      if (!email || !password) {
-        errorBox.textContent = "Заполни email и пароль.";
-        return;
-      }
+        <div class="user-name">
+          ${escapeHtml(user.email)}
+        </div>
 
-      if (password.length < 6) {
-        errorBox.textContent = "Пароль должен быть минимум 6 символов.";
-        return;
-      }
+        <div class="user-status">
+          ● доступен
+        </div>
 
-      try {
+      </div>
 
-        if (registerMode) {
+    `;
 
-          const result =
-            await createUserWithEmailAndPassword(
-              auth,
-              email,
-              password
+
+    element.onclick =
+      () => openChat(user);
+
+
+    usersBox.appendChild(element);
+
+  });
+
+}
+
+
+/* ПОИСК */
+
+search.oninput = () => {
+
+  const value =
+    search.value
+      .toLowerCase()
+      .trim();
+
+
+  const result =
+    allUsers.filter(
+      user =>
+        user.email
+          .toLowerCase()
+          .includes(value)
+    );
+
+
+  renderUsers(result);
+
+};
+
+
+/* ЧАТ */
+
+function openChat(user){
+
+  selectedUser =
+    user;
+
+
+  chatHeader.innerHTML = `
+
+    <div class="avatar">
+      ${user.email
+        .charAt(0)
+        .toUpperCase()}
+    </div>
+
+    <div class="chat-info">
+
+      <div class="chat-name">
+        ${escapeHtml(user.email)}
+      </div>
+
+      <div class="online">
+        ● доступен
+      </div>
+
+    </div>
+
+  `;
+
+
+  messageInput.disabled =
+    false;
+
+  sendButton.disabled =
+    false;
+
+
+  if(unsubscribeMessages){
+
+    unsubscribeMessages();
+
+  }
+
+
+  messages.innerHTML = "";
+
+
+  const chatId =
+    makeChatId(
+      currentUser.uid,
+      selectedUser.id
+    );
+
+
+  const messagesQuery =
+    query(
+
+      collection(
+        db,
+        "chats",
+        chatId,
+        "messages"
+      ),
+
+      orderBy(
+        "createdAt",
+        "asc"
+      )
+
+    );
+
+
+  unsubscribeMessages =
+    onSnapshot(
+
+      messagesQuery,
+
+      snapshot => {
+
+        messages.innerHTML = "";
+
+
+        if(snapshot.empty){
+
+          messages.innerHTML = `
+            <div class="welcome">
+              Начните общение 👋
+            </div>
+          `;
+
+          return;
+        }
+
+
+        snapshot.forEach(item => {
+
+          const data =
+            item.data();
+
+
+          const message =
+            document.createElement("div");
+
+
+          message.className =
+            "message " +
+            (
+              data.senderId ===
+              currentUser.uid
+                ? "mine"
+                : "theirs"
             );
 
-          await setDoc(
-            doc(db, "users", result.user.uid),
-            {
-              email: email,
-              createdAt: serverTimestamp()
-            }
+
+          const text =
+            document.createElement("div");
+
+          text.textContent =
+            data.text;
+
+
+          const time =
+            document.createElement("div");
+
+          time.className =
+            "time";
+
+          time.textContent =
+            "✓✓";
+
+
+          message.appendChild(text);
+
+          message.appendChild(time);
+
+          messages.appendChild(
+            message
           );
 
-        } else {
+        });
 
-          await signInWithEmailAndPassword(
-            auth,
-            email,
-            password
-          );
-        }
 
-      } catch (error) {
+        messages.scrollTop =
+          messages.scrollHeight;
 
-        console.log(error);
+      },
 
-        if (error.code === "auth/email-already-in-use") {
-          errorBox.textContent =
-            "Этот email уже зарегистрирован.";
-        } else if (error.code === "auth/invalid-credential") {
-          errorBox.textContent =
-            "Неверный email или пароль.";
-        } else if (error.code === "auth/invalid-email") {
-          errorBox.textContent =
-            "Неверный email.";
-        } else {
-          errorBox.textContent =
-            "Ошибка: " + error.message;
-        }
-      }
-    };
-
-
-    // СЛЕДИМ ЗА ВХОДОМ
-    onAuthStateChanged(auth, async (user) => {
-
-      if (user) {
-
-        currentUser = user;
-
-        authScreen.style.display = "none";
-        messenger.style.display = "flex";
-
-        myEmail.textContent = user.email;
-
-        await loadUsers();
-
-      } else {
-
-        currentUser = null;
-
-        authScreen.style.display = "flex";
-        messenger.style.display = "none";
-      }
-    });
-
-
-    // ЗАГРУЗКА ПОЛЬЗОВАТЕЛЕЙ
-    async function loadUsers() {
-
-      const snapshot =
-        await getDocs(collection(db, "users"));
-
-      allUsers = [];
-
-      snapshot.forEach((item) => {
-
-        if (item.id !== currentUser.uid) {
-
-          allUsers.push({
-            id: item.id,
-            ...item.data()
-          });
-        }
-      });
-
-      renderUsers(allUsers);
-    }
-
-
-    // ПОКАЗ ПОЛЬЗОВАТЕЛЕЙ
-    function renderUsers(users) {
-
-      usersBox.innerHTML = "";
-
-      if (users.length === 0) {
-
-        usersBox.innerHTML =
-          '<div style="padding:20px;color:#777;text-align:center;">Пока никого нет</div>';
-
-        return;
-      }
-
-      users.forEach((user) => {
-
-        const element = document.createElement("div");
-
-        element.className = "user";
-
-        element.innerHTML = `
-          <div class="user-name">
-            ${escapeHtml(user.email)}
-          </div>
-          <div class="user-email">
-            Нажмите, чтобы написать
-          </div>
-        `;
-
-        element.onclick = () => {
-          openChat(user);
-        };
-
-        usersBox.appendChild(element);
-      });
-    }
-
-
-    // ПОИСК
-    searchInput.oninput = () => {
-
-      const text =
-        searchInput.value.toLowerCase().trim();
-
-      const filtered =
-        allUsers.filter(user =>
-          user.email.toLowerCase().includes(text)
-        );
-
-      renderUsers(filtered);
-    };
-
-
-    // ОТКРЫТЬ ЧАТ
-    function openChat(user) {
-
-      selectedUser = user;
-
-      chatHead.textContent =
-        "Чат с " + user.email;
-
-      messageInput.disabled = false;
-      sendButton.disabled = false;
-
-      messagesBox.innerHTML = "";
-
-      if (unsubscribeMessages) {
-        unsubscribeMessages();
-      }
-
-
-      const chatId = makeChatId(
-        currentUser.uid,
-        selectedUser.id
-      );
-
-
-      const messagesQuery = query(
-        collection(db, "chats", chatId, "messages"),
-        orderBy("createdAt", "asc")
-      );
-
-
-      unsubscribeMessages =
-        onSnapshot(
-          messagesQuery,
-          (snapshot) => {
-
-            messagesBox.innerHTML = "";
-
-            if (snapshot.empty) {
-
-              messagesBox.innerHTML =
-                '<div class="empty">Начните общение 👋</div>';
-
-              return;
-            }
-
-            snapshot.forEach((item) => {
-
-              const data = item.data();
-
-              const message =
-                document.createElement("div");
-
-              message.className =
-                "message " +
-                (
-                  data.senderId === currentUser.uid
-                    ? "mine"
-                    : "theirs"
-                );
-
-              message.textContent = data.text;
-
-              messagesBox.appendChild(message);
-            });
-
-            messagesBox.scrollTop =
-              messagesBox.scrollHeight;
-          },
-          (error) => {
-
-            console.error(error);
-
-            messagesBox.innerHTML =
-              '<div class="empty">Не удалось загрузить сообщения.</div>';
-          }
-        );
-    }
-
-
-    // ОТПРАВКА
-    async function sendMessage() {
-
-      if (!currentUser || !selectedUser) return;
-
-      const text =
-        messageInput.value.trim();
-
-      if (!text) return;
-
-
-      const chatId = makeChatId(
-        currentUser.uid,
-        selectedUser.id
-      );
-
-
-      try {
-
-        await addDoc(
-          collection(
-            db,
-            "chats",
-            chatId,
-            "messages"
-          ),
-          {
-            text: text,
-            senderId: currentUser.uid,
-            receiverId: selectedUser.id,
-            createdAt: serverTimestamp()
-          }
-        );
-
-        messageInput.value = "";
-
-      } catch (error) {
+      error => {
 
         console.error(error);
 
-        alert(
-          "Сообщение не отправилось. Проверь правила Firestore."
-        );
-      }
-    }
+        messages.innerHTML = `
+          <div class="welcome">
+            Ошибка загрузки сообщений.
+          </div>
+        `;
 
-
-    sendButton.onclick = sendMessage;
-
-
-    messageInput.onkeydown = (event) => {
-
-      if (event.key === "Enter") {
-        sendMessage();
-      }
-    };
-
-
-    // ВЫХОД
-    logoutButton.onclick = async () => {
-
-      if (unsubscribeMessages) {
-        unsubscribeMessages();
       }
 
-      await signOut(auth);
-    };
+    );
+
+}
 
 
-    // ОДИН ID ДЛЯ ДВУХ СОБЕСЕДНИКОВ
-    function makeChatId(a, b) {
+/* ОТПРАВКА */
 
-      return [a, b].sort().join("_");
+async function sendMessage(){
+
+  if(
+    !currentUser ||
+    !selectedUser
+  ) return;
+
+
+  const text =
+    messageInput.value.trim();
+
+
+  if(!text) return;
+
+
+  const chatId =
+    makeChatId(
+      currentUser.uid,
+      selectedUser.id
+    );
+
+
+  try{
+
+    await addDoc(
+
+      collection(
+        db,
+        "chats",
+        chatId,
+        "messages"
+      ),
+
+      {
+
+        text:text,
+
+        senderId:
+          currentUser.uid,
+
+        receiverId:
+          selectedUser.id,
+
+        createdAt:
+          serverTimestamp()
+
+      }
+
+    );
+
+
+    messageInput.value = "";
+
+
+  }catch(e){
+
+    console.error(e);
+
+    alert(
+      "Не удалось отправить сообщение."
+    );
+
+  }
+
+}
+
+
+sendButton.onclick =
+  sendMessage;
+
+
+messageInput.onkeydown =
+  event => {
+
+    if(event.key === "Enter"){
+
+      sendMessage();
+
     }
 
+  };
 
-    // ЗАЩИТА ОТ HTML В EMAIL
-    function escapeHtml(text) {
 
-      const div =
-        document.createElement("div");
+/* ВЫХОД */
 
-      div.textContent = text;
+logoutButton.onclick =
+  async () => {
 
-      return div.innerHTML;
+    if(unsubscribeMessages){
+
+      unsubscribeMessages();
+
     }
 
-  </script>
+    await signOut(auth);
+
+  };
+
+
+/* ID ЧАТА */
+
+function makeChatId(a,b){
+
+  return [a,b]
+    .sort()
+    .join("_");
+
+}
+
+
+/* ПОИСК */
+
+window.focusSearch =
+  () => {
+
+    search.focus();
+
+  };
+
+
+/* ЗАЩИТА EMAIL */
+
+function escapeHtml(text){
+
+  const div =
+    document.createElement("div");
+
+  div.textContent =
+    text;
+
+  return div.innerHTML;
+
+}
+
+</script>
 
 </body>
 </html>
+
