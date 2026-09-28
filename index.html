@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Свобода — мессенджер</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f2f5f7;
+      color: #17212b;
+      height: 100vh;
+    }
+
+    .app {
+      max-width: 1100px;
+      height: 100vh;
+      margin: auto;
+      display: flex;
+      background: white;
+      overflow: hidden;
+    }
+
+    /* Левая часть */
+    .sidebar {
+      width: 330px;
+      border-right: 1px solid #ddd;
+      background: #ffffff;
+    }
+
+    .logo {
+      padding: 22px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #1677ff;
+    }
+
+    .logo span {
+      color: #111;
+    }
+
+    .search {
+      margin: 0 15px 15px;
+      padding: 12px 15px;
+      border: none;
+      outline: none;
+      background: #f1f3f5;
+      border-radius: 12px;
+      width: calc(100% - 30px);
+      font-size: 15px;
+    }
+
+    .user {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 18px;
+      cursor: pointer;
+    }
+
+    .user:hover {
+      background: #f2f6fa;
+    }
+
+    .avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #1677ff;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 19px;
+    }
+
+    .user-info {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: bold;
+      margin-bottom: 4px;
+    }
+
+    .last-message {
+      color: #89939c;
+      font-size: 13px;
+    }
+
+    .online {
+      color: #18b957;
+      font-size: 12px;
+    }
+
+    /* Чат */
+    .chat {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      height: 76px;
+      padding: 14px 20px;
+      border-bottom: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-title {
+      font-weight: bold;
+      font-size: 17px;
+    }
+
+    .messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      background: #f5f7f9;
+    }
+
+    .message {
+      max-width: 70%;
+      padding: 11px 15px;
+      margin-bottom: 10px;
+      border-radius: 15px;
+      font-size: 15px;
+      line-height: 1.4;
+    }
+
+    .received {
+      background: white;
+      border-bottom-left-radius: 4px;
+    }
+
+    .sent {
+      background: #1677ff;
+      color: white;
+      margin-left: auto;
+      border-bottom-right-radius: 4px;
+    }
+
+    .time {
+      font-size: 10px;
+      opacity: 0.65;
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    .input-area {
+      padding: 14px;
+      border-top: 1px solid #ddd;
+      display: flex;
+      gap: 10px;
+      background: white;
+    }
+
+    .message-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      background: #f1f3f5;
+      border-radius: 20px;
+      padding: 12px 16px;
+      font-size: 15px;
+    }
+
+    .send {
+      border: none;
+      background: #1677ff;
+      color: white;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    .send:hover {
+      background: #0967e8;
+    }
+
+    /* Телефон */
+    @media (max-width: 700px) {
+      .sidebar {
+        width: 85px;
+      }
+
+      .logo {
+        font-size: 20px;
+        padding: 20px 10px;
+        text-align: center;
+      }
+
+      .search {
+        display: none;
+      }
+
+      .user {
+        justify-content: center;
+        padding: 12px 5px;
+      }
+
+      .user-info {
+        display: none;
+      }
+
+      .message {
+        max-width: 85%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="app">
+
+  <!-- Список пользователей -->
+  <aside class="sidebar">
+
+    <div class="logo">
+      С<span>ВОБОДА</span>
+    </div>
+
+    <input
+      class="search"
+      type="text"
+      placeholder="Поиск..."
+      oninput="searchUsers(this.value)"
+    >
+
+    <div id="users">
+
+      <div class="user" onclick="openChat('Алекс')">
+        <div class="avatar">А</div>
+
+        <div class="user-info">
+          <div class="user-name">Алекс</div>
+          <div class="last-message">Привет!</div>
+        </div>
+
+        <div class="online">●</div>
+      </div>
+
+      <div class="user" onclick="openChat('Данияр')">
+        <div class="avatar">Д</div>
+
+        <div class="user-info">
+          <div class="user-name">Данияр</div>
+          <div class="last-message">Как дела?</div>
+        </div>
+
+        <div class="online">●</div>
+      </div>
+
+      <div class="user" onclick="openChat('Айбек')">
+        <div class="avatar">А</div>
+
+        <div class="user-info">
+          <div class="user-name">Айбек</div>
+          <div class="last-message">До встречи!</div>
+        </div>
+
+        <div class="online">●</div>
+      </div>
+
+    </div>
+  </aside>
+
+
+  <!-- Чат -->
+  <main class="chat">
+
+    <header class="chat-header">
+
+      <div class="avatar" id="chatAvatar">
+        А
+      </div>
+
+      <div>
+        <div class="chat-title" id="chatName">
+          Алекс
+        </div>
+
+        <div class="online">
+          в сети
+        </div>
+      </div>
+
+    </header>
+
+
+    <!-- Сообщения -->
+    <section class="messages" id="messages">
+
+      <div class="message received">
+        Привет! 👋
+        <div class="time">21:05</div>
+      </div>
+
+      <div class="message received">
+        Добро пожаловать в Свободу!
+        <div class="time">21:06</div>
+      </div>
+
+    </section>
+
+
+    <!-- Отправка -->
+    <div class="input-area">
+
+      <input
+        id="messageInput"
+        class="message-input"
+        type="text"
+        placeholder="Напишите сообщение..."
+        onkeydown="handleEnter(event)"
+      >
+
+      <button class="send" onclick="sendMessage()">
+        ➤
+      </button>
+
+    </div>
+
+  </main>
+
+</div>
+
+
+<script>
+
+  let currentChat = "Алекс";
+
+
+  function sendMessage() {
+
+    const input = document.getElementById("messageInput");
+    const text = input.value.trim();
+
+    if (text === "") return;
+
+    const messages = document.getElementById("messages");
+
+    const message = document.createElement("div");
+
+    message.className = "message sent";
+
+    const now = new Date();
+
+    const time =
+      now.getHours().toString().padStart(2, "0") +
+      ":" +
+      now.getMinutes().toString().padStart(2, "0");
+
+    message.innerHTML =
+      text +
+      '<div class="time">' +
+      time +
+      "</div>";
+
+    messages.appendChild(message);
+
+    input.value = "";
+
+    messages.scrollTop = messages.scrollHeight;
+  }
+
+
+  function handleEnter(event) {
+
+    if (event.key === "Enter") {
+      sendMessage();
+    }
+
+  }
+
+
+  function openChat(name) {
+
+    currentChat = name;
+
+    document.getElementById("chatName").textContent = name;
+
+    document.getElementById("chatAvatar").textContent =
+      name.charAt(0);
+
+    document.getElementById("messages").innerHTML = "";
+
+    const welcome = document.createElement("div");
+
+    welcome.className = "message received";
+
+    welcome.innerHTML =
+      "Чат с " +
+      name +
+      " открыт 👋" +
+      '<div class="time">сейчас</div>';
+
+    document
+      .getElementById("messages")
+      .appendChild(welcome);
+  }
+
+
+  function searchUsers(value) {
+
+    value = value.toLowerCase();
+
+    const users =
+      document.querySelectorAll(".user");
+
+    users.forEach(function(user) {
+
+      const name =
+        user.querySelector(".user-name")
+        .textContent
+        .toLowerCase();
+
+      if (name.includes(value)) {
+        user.style.display = "flex";
+      } else {
+        user.style.display = "none";
+      }
+
+    });
+
+  }
+
+</script>
+
+</body>
+          </html>
